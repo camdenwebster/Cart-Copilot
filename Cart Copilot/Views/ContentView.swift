@@ -5,46 +5,17 @@
 //  Created by Camden Webster on 1/1/25.
 //
 
+import SwiftData
 import SwiftUI
 
-@Observable
-class PathStore {
-    var path: NavigationPath {
-        didSet {
-            save()
-        }
-    }
-    private let savePath = URL.documentsDirectory.appending(path: "SavedPath")
-    
-    init() {
-        if let data = try? Data(contentsOf: savePath) {
-            if let decoded = try? JSONDecoder().decode(NavigationPath.CodableRepresentation.self, from: data) {
-                path = NavigationPath(decoded)
-                return
-            }
-        }
-        path = NavigationPath()
-    }
-    
-    func save() {
-        guard let representation = path.codable else { return }
-        
-        do {
-            let data = try JSONEncoder().encode(representation)
-            try data.write(to: savePath)
-        } catch {
-            print("Failed to save navigation data")
-        }
-    }
-}
-
 struct ContentView: View {
-    @State private var pathStore = PathStore()
-    @State private var shoppingItems = ShoppingItems()
+    @Environment(\.modelContext) var modelContext
+    @Query var shoppingItems: [ShoppingItem]
+    @State private var path = NavigationPath()
     @State private var showingNewItem = false
     
     var subtotal: Double {
-        shoppingItems.items.reduce(0) { $0 + $1.amount }
+        shoppingItems.reduce(0) { $0 + $1.amount }
     }
     
     var tax: Double {
@@ -68,7 +39,7 @@ struct ContentView: View {
     }
     
     var body: some View {
-        NavigationStack(path: $pathStore.path) {
+        NavigationStack(path: $path) {
             VStack {
                 VStack(alignment: .leading, spacing: 4) {
                     HStack {
@@ -84,14 +55,14 @@ struct ContentView: View {
                     HStack {
                         Text("Total Items:")
                         Spacer()
-                        Text("\(shoppingItems.items.count)")
+                        Text("\(shoppingItems.count)")
                     }
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
                 
                 List {
-                    ForEach(shoppingItems.items) { item in
+                    ForEach(shoppingItems) { item in
                         NavigationLink(value: item) {
                             ShoppingItemRowView(shoppingItem: item)
                         }
@@ -101,8 +72,8 @@ struct ContentView: View {
             }
             .navigationTitle(formattedTotal)
             .navigationDestination(for: ShoppingItem.self) { item in
-                let index = shoppingItems.items.firstIndex(where: { $0.id == item.id })!
-                ShoppingItemDetailView(shoppingItem: $shoppingItems.items[index])
+                let index = shoppingItems.firstIndex(where: { $0.id == item.id })!
+                ShoppingItemDetailView(shoppingItem: shoppingItems[index])
             }
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
@@ -118,12 +89,15 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingNewItem) {
-            NewItemView(shoppingItems: shoppingItems)
+            ItemFormView()
         }
     }
     
     func removeItems(at offsets: IndexSet) {
-        shoppingItems.items.remove(atOffsets: offsets)
+        for offset in offsets {
+            let item = shoppingItems[offset]
+            modelContext.delete(item)
+        }
     }
     
 }

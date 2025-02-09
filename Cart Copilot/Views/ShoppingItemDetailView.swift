@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct ShoppingItemDetailView: View {
-    // Change to @Binding to allow modifications
-    @Binding var shoppingItem: ShoppingItem
-    @State private var showingEditItem = false
+    @Environment(\.modelContext) private var modelContext
+    @Bindable var shoppingItem: ShoppingItem
+    @State private var isEditing = false
     
     var body: some View {
         Form {
@@ -38,17 +38,17 @@ struct ShoppingItemDetailView: View {
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button("Edit") {
-                    showingEditItem = true
+                    isEditing = true
                 }
                 
             }
         }
-        .sheet(isPresented: $showingEditItem) {
-            EditItemView(shoppingItem: $shoppingItem)
+        .sheet(isPresented: $isEditing) {
+            ItemFormView(item: shoppingItem)
         }
     }
 }
 
 #Preview {
-    ShoppingItemDetailView(shoppingItem: .constant(ShoppingItem(name: "Test", quantity: 1, category: "Groceries", amount: 0.0, taxRate: 0.0)))
+    ShoppingItemDetailView(shoppingItem: ShoppingItem())
 }
