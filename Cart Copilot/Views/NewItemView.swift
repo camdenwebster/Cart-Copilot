@@ -5,18 +5,21 @@
 //  Created by Camden Webster on 1/1/25.
 //
 
+import SwiftData
 import SwiftUI
 
 struct NewItemView: View {
+    @Environment(\.modelContext) private var modelContext
     @State private var name = ""
     @State private var category = "Groceries"
+    @State private var store = "Aldi"
     @State private var priceText = ""
     @State private var taxRate = 0.0
     @State private var quantity = 1
     @Environment(\.dismiss) var dismiss
     
-    var shoppingItems: ShoppingItems
-    let categories = ["Groceries", "Personal Care", "Baby Care", "Home Decor", "Cleaning Supplies"]
+    let categories = ["Groceries", "Personal Care", "Baby Care", "Home Decor", "Cleaning Supplies"].sorted()
+    let stores = ["Woodmans", "Costco", "Aldi", "Jewel", "Target", "Other"].sorted()
     
 
     private var amount: Double? {
@@ -24,10 +27,6 @@ struct NewItemView: View {
             return value
         }
         return nil
-    }
-    
-    init(shoppingItems: ShoppingItems) {
-        self.shoppingItems = shoppingItems
     }
 
     var body: some View {
@@ -39,17 +38,17 @@ struct NewItemView: View {
                         Text($0)
                     }
                 }
+                Picker("Store", selection: $store) {
+                    ForEach(stores, id: \.self) {
+                        Text($0)
+                    }
+                }
                 Stepper("\(quantity)", value: $quantity, in: 1...100, step: 1)
                 HStack {
                     Text("$")
                     Spacer()
                     TextField("Price", text: $priceText)
                         .keyboardType(.decimalPad)
-//                        .onChange(of: priceText) {
-//                            if let value = amount {
-//                                priceText = value.formatted(.currency(code: "USD"))
-//                            }
-//                        }
                         .frame(alignment: .trailing)
                 }
             }
@@ -65,8 +64,8 @@ struct NewItemView: View {
                 ToolbarItem(placement: .topBarTrailing){
                     Button("Save") {
                         guard let validAmount = amount else { return }
-                        let item = ShoppingItem(name: name, quantity: quantity, category: category, amount: validAmount, taxRate: taxRate)
-                        shoppingItems.items.append(item)
+                        let item = ShoppingItem(name: name, quantity: quantity, category: category, amount: validAmount, taxRate: taxRate, store: store)
+                        modelContext.insert(item)
                         dismiss()
                     }
                     .bold()
@@ -78,5 +77,5 @@ struct NewItemView: View {
 }
 
 #Preview {
-    NewItemView(shoppingItems: ShoppingItems())
+    NewItemView()
 }

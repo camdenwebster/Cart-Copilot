@@ -8,19 +8,18 @@
 import SwiftUI
 
 struct EditItemView: View {
-    @Binding var shoppingItem: ShoppingItem
+    @Environment(\.managedObjectContext) private var viewContext
+    @Bindable var shoppingItem: ShoppingItem
     @Environment(\.dismiss) var dismiss
-    
-    let categories = ["Groceries", "Personal Care", "Baby Care", "Home Decor", "Cleaning Supplies"]
-    
+    @State private var selectedCategory: Category = .produce
 
     var body: some View {
         NavigationStack {
             Form {
                 TextField("Eggs, milk, etc", text: $shoppingItem.name)
-                Picker("Category", selection: $shoppingItem.category) {
-                    ForEach(categories, id: \.self) {
-                        Text($0)
+                Picker("Category", selection: $selectedCategory) {
+                    ForEach(Category.allCases, id: \.self) { category in
+                        Text(category.rawValue)
                     }
                 }
                 Stepper("\(shoppingItem.quantity)", value: $shoppingItem.quantity, in: 1...100, step: 1)
@@ -48,5 +47,5 @@ struct EditItemView: View {
 }
 
 #Preview {
-    EditItemView(shoppingItem: .constant(ShoppingItem(name: "Test", quantity: 1, category: "Groceries", amount: 0.0, taxRate: 0.0)))
+    EditItemView(shoppingItem: ShoppingItem())
 }

@@ -27,5 +27,5 @@ struct ShoppingItemRowView: View {
 }
 
 #Preview {
-    ShoppingItemRowView(shoppingItem: ShoppingItem(name: "Test", quantity: 1, category: "Groceries", amount: 0.0, taxRate: 0.0))
+    ShoppingItemRowView(shoppingItem: ShoppingItem())
 }
