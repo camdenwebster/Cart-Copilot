@@ -81,6 +81,11 @@ struct ContentView: View {
                         Spacer()
                         Text(formattedTax)
                     }
+                    HStack {
+                        Text("Total Items:")
+                        Spacer()
+                        Text("\(shoppingItems.items.count)")
+                    }
                 }
                 .padding(.horizontal)
                 .padding(.top, 8)
