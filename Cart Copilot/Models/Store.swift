@@ -9,13 +9,13 @@ import Foundation
 
 enum Store: String, CaseIterable {
     case aldi = "Aldi"
-    case meijer = "Meijer"
-    case tradersJoe = "Trader Joe's"
-    case wholeFoods = "Whole Foods"
-    case target = "Target"
-    case walmart = "Walmart"
-    case costco = "Costco"
     case amazon = "Amazon"
+    case costco = "Costco"
     case instacart = "Instacart"
+    case meijer = "Meijer"
     case other = "Other"
+    case target = "Target"
+    case tradersJoe = "Trader Joe's"
+    case walmart = "Walmart"
+    case wholeFoods = "Whole Foods"
 }

@@ -8,14 +8,14 @@
 import Foundation
 
 enum Category: String, CaseIterable {
-    case produce = "Produce"
-    case dairy = "Dairy"
-    case meat = "Meat"
     case bakery = "Bakery"
-    case pantry = "Pantry"
-    case frozen = "Frozen"
     case beverages = "Beverages"
+    case dairy = "Dairy"
+    case frozen = "Frozen"
     case household = "Household"
-    case personal = "Personal Care"
+    case meat = "Meat"
     case other = "Other"
+    case pantry = "Pantry"
+    case personal = "Personal Care"
+    case produce = "Produce"
 }
