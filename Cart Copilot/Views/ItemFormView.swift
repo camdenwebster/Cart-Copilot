@@ -1,4 +1,10 @@
-// Add imports
+//
+//  ItemFormView.swift
+//  Cart Copilot
+//
+//  Created by Camden Webster on 2/9/25.
+//
+
 import SwiftUI
 import SwiftData
 
@@ -95,5 +101,3 @@ struct ItemFormView: View {
     ItemFormView()
         .modelContainer(for: ShoppingItem.self)
 }
-
-// End of file. No additional code.
