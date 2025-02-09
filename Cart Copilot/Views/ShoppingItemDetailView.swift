@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ShoppingItemDetailView: View {
-    @Environment(\.managedObjectContext) private var viewContext
+    @Environment(\.modelContext) private var modelContext
     @Bindable var shoppingItem: ShoppingItem
     @State private var isEditing = false
     
